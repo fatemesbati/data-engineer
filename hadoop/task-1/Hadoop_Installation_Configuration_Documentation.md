@@ -45,17 +45,17 @@ Hadoop depends on Java to function, so the first step is installing Java.
 
 1. **Download the latest stable version of Hadoop:**
    ```bash
-   wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
+   wget https://downloads.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz
    ```
 
 2. **Extract the downloaded file:**
    ```bash
-   tar -xzvf hadoop-3.3.6.tar.gz
+   tar -xzvf hadoop-3.3.4.tar.gz
    ```
 
 3. **Move the extracted files to `/usr/local/hadoop`:**
    ```bash
-   sudo mv hadoop-3.3.6 /usr/local/hadoop
+   sudo mv hadoop-3.3.4 /usr/local/hadoop
    ```
 
 ### Step 3: Configure Hadoop Environment Variables
