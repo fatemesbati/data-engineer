@@ -1,5 +1,5 @@
 
-# Detailed Documentation of Tasks Completed
+# Detailed Documentation of Completed Tasks
 
 ## Part 1: Log Rotation Script
 
@@ -83,7 +83,7 @@ Install Hadoop and use its file system (HDFS) to store the log files processed i
 1. **Download and Install Hadoop**:
    - Download Hadoop 3.4.0 from the official website.
    - Extract the tar file and set up the environment variables.
-   [Link to HOW TO INSTALL HADOOP in detail](./Hadoop_Installation_Configuration_Documentation.md)
+   [Link to HOW TO INSTALL HADOOP in detail](./Hadoop_Installation.md)
 
 2. **Create a Directory in HDFS**:
    - Use the command `hdfs dfs -mkdir /log`.
