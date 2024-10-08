@@ -133,6 +133,10 @@ Create the file by copying the template:
 ```bash
 cp $HADOOP_HOME/etc/hadoop/mapred-site.xml.template $HADOOP_HOME/etc/hadoop/mapred-site.xml
 ```
+Ignore above command if you face any error and just run this:
+```bash
+nano $HADOOP_HOME/etc/hadoop/mapred-site.xml
+```
 Add the following:
 ```xml
 <configuration>
