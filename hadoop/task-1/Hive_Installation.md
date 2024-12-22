@@ -298,11 +298,4 @@ SHOW TABLES;
 
 ---
 
-## Key Notes
-- Hive 4.0.1 requires Java 8 and a working MySQL metastore configuration.
-- Ensure the `core-site.xml` is correctly configured for HDFS.
-- Use `schematool` to initialize the metastore schema.
-
----
-
 By following this guide, you can successfully install and configure Apache Hive 4.0.1 on Rocky Linux.

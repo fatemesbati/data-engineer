@@ -237,11 +237,4 @@ sudo systemctl status trino
 
 ---
 
-## **Key Notes**
-- **Ports:** Ensure the configured port (default: 8080) is open in your firewall.
-- **Memory:** Adjust memory settings in `jvm.config` based on available system resources.
-- **Catalogs:** Add additional catalog configurations for other data sources as needed.
-
----
-
-By following this guide, you can successfully install and configure Trino on Rocky Linux. Let me know if you need further assistance!
+By following this guide, you can successfully install and configure Trino on Rocky Linux.
