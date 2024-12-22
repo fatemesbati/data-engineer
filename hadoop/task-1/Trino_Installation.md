@@ -13,13 +13,21 @@ sudo dnf update -y
 ```
 
 ### **1.2 Install Java**
-Trino requires Java 11 or newer. Install OpenJDK 11:
+Trino requires temurin java 21:
 ```bash
-sudo dnf install java-11-openjdk-devel -y
+DISTRIBUTION_NAME=rhel
+cat <<EOF > /etc/yum.repos.d/adoptium.repo
+[Adoptium]
+name=Adoptium
+baseurl=https://packages.adoptium.net/artifactory/rpm/${DISTRIBUTION_NAME:-$(. /etc/os-release; echo $ID)}/\$releasever/\$basearch
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.adoptium.net/artifactory/api/gpg/key/public
+EOF
 ```
-Verify the installation:
+Download From Here And Install it: 
 ```bash
-java -version
+https://packages.adoptium.net/ui/native/rpm/rocky/8/x86_64/Packages/
 ```
 
 #### Common Error:
