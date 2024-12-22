@@ -29,16 +29,6 @@ Download From Here And Install it:
 ```bash
 https://packages.adoptium.net/ui/native/rpm/rocky/8/x86_64/Packages/
 ```
-
-#### Common Error:
-- **Error:** `java: command not found`  
-  **Solution:** Ensure Java is installed and `JAVA_HOME` is correctly set:
-  ```bash
-  echo "export JAVA_HOME=$(dirname $(dirname $(readlink $(readlink $(which java)))))" >> ~/.bashrc
-  echo "export PATH=$PATH:$JAVA_HOME/bin" >> ~/.bashrc
-  source ~/.bashrc
-  ```
-
 ---
 
 ## **2. Download and Install Trino**
