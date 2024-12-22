@@ -201,7 +201,7 @@ export HADOOP_LOG_DIR=${HADOOP_HOME}/logs
    ssh localhost
    ```
 
----
+---![Logo](./images/14.png)
 
 ### Step 6: Understanding `PDSH_RCMD_TYPE=ssh`
 
