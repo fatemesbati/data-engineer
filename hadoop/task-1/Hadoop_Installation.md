@@ -5,19 +5,34 @@ Based on the [Hadoop Single Node Cluster Setup Documentation](https://hadoop.apa
 
 ## Prerequisites:
 - **Operating System:** Linux distribution (e.g., Ubuntu)
-- **Java:** Ensure Java is installed on your system, as Hadoop requires Java 8 or a compatible version.
+- **Java:** Ensure Java is installed on your system, as Hadoop requires Java 21 or a compatible version.
 
 ### Step 1: Install Java
 Hadoop depends on Java to function, so the first step is installing Java.
 
 1. **Update your package repository:**
    ```bash
+   # For Debian:
    sudo apt-get update
+
+   # For RHEL:
+   sudo dnf update
    ```
 
-2. **Install Java 8 (OpenJDK):**
+2. **Install Java 21 (OpenJDK):**
    ```bash
-   sudo apt-get install openjdk-8-jdk
+   # For Debian:
+   sudo apt-get install openjdk-21-jdk
+
+   # For RHEL:
+   sudo dnf install java-21-openjdk
+   sudo dnf install java-21-openjdk-devel -y
+   
+   sudo dnf install java-17-openjdk-devel -y
+   
+   sudo dnf install java-11-openjdk-devel -y
+   
+   sudo dnf install java-1.8.0-openjdk-devel -y
    ```
 
 3. **Verify Java installation:**
@@ -33,29 +48,39 @@ Hadoop depends on Java to function, so the first step is installing Java.
    ```
    Add the following lines to set up the Java environment:
    ```bash
-   export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+   export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
    export PATH=$PATH:$JAVA_HOME/bin
    ```
    Save the file and run:
    ```bash
    source ~/.bashrc
    ```
+   If multiple Java versions are installed, you can use the following command to select the default version:
+5. if you change it, close your terminal!
+   ```bash
+   sudo update-alternatives --config java  # For Debian
+   sudo alternatives --config java        # For RHEL
+   ```
 
 ### Step 2: Download and Install Hadoop
 
 1. **Download the latest stable version of Hadoop:**
    ```bash
-   wget https://dlcdn.apache.org/hadoop/common/hadoop-3.4.0/hadoop-3.4.0.tar.gz
+   wget https://archive.apache.org/dist/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz
+   wget https://archive.apache.org/dist/hadoop/common/hadoop-3.3.5/hadoop-3.3.5.tar.gz
+
    ```
 
 2. **Extract the downloaded file:**
    ```bash
-   tar -xzvf hadoop-3.4.0.tar.gz
+   tar -xzvf hadoop-3.3.5.tar.gz
+   tar -xzvf apache-hive-3.1.3-bin.tar.gz
    ```
 
 3. **Move the extracted files to `/usr/local/hadoop`:**
    ```bash
-   sudo mv hadoop-3.4.0 /usr/local/hadoop
+   sudo mv hadoop-3.3.5 /usr/local/hadoop
+   sudo mv apache-hive-3.1.3-bin /usr/local/hive
    ```
 
 ### Step 3: Configure Hadoop Environment Variables
@@ -154,26 +179,38 @@ nano $HADOOP_HOME/etc/hadoop/yarn-site.xml
 ```
 Add the following content:
 ```xml
+
 <configuration>
+   <!-- Site specific YARN configuration properties -->
    <property>
       <name>yarn.nodemanager.aux-services</name>
       <value>mapreduce_shuffle</value>
    </property>
    <property>
       <name>yarn.nodemanager.env-whitelist</name>
-      <value>JAVA_HOME</value>
+      <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_HOME,PATH,LANG,TZ,HADOOP_MAPRED_HOME</value>
    </property>
    <property>
-      <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
-      <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+      <name>yarn.nodemanager.resource.memory-mb</name>
+      <value>4096</value>
+   </property>
+   <property>
+      <name>yarn.scheduler.minimum-allocation-mb</name>
+      <value>2048</value>
+   </property>
+   <property>
+      <name>yarn.nodemanager.vmem-pmem-ratio</name>
+      <value>2.1</value>
    </property>
 </configuration>
+
+
 ```
 
 #### 5. hadoop-env.sh
 Open it:
 ```bash
-nano /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+nano $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 ```
 Add the following line to define the directory where Hadoop logs will be written:
 ```bash
@@ -184,6 +221,9 @@ export HADOOP_LOG_DIR=${HADOOP_HOME}/logs
 1. **Install OpenSSH:**
    ```bash
    sudo apt-get install openssh-server
+   
+   sudo dnf install -y openssh-server
+
    ```
 
 2. **Generate SSH keys:**
@@ -194,6 +234,8 @@ export HADOOP_LOG_DIR=${HADOOP_HOME}/logs
 3. **Add SSH key to authorized keys:**
    ```bash
    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+   
+   chmod 600 ~/.ssh/authorized_keys
    ```
 
 4. **Verify the SSH setup:**

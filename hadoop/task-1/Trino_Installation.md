@@ -15,18 +15,23 @@ sudo dnf update -y
 ### **1.2 Install Java**
 Trino requires temurin java 21:
 ```bash
-DISTRIBUTION_NAME=rhel
-cat <<EOF > /etc/yum.repos.d/adoptium.repo
+sudo bash -c 'cat <<EOF > /etc/yum.repos.d/adoptium.repo
 [Adoptium]
 name=Adoptium
 baseurl=https://packages.adoptium.net/artifactory/rpm/${DISTRIBUTION_NAME:-$(. /etc/os-release; echo $ID)}/\$releasever/\$basearch
 enabled=1
 gpgcheck=1
 gpgkey=https://packages.adoptium.net/artifactory/api/gpg/key/public
-EOF
+EOF'
+
 ```
 Download From Here And Install it: 
 ```bash
+wget https://packages.adoptium.net/artifactory/rpm/rocky/8/x86_64/Packages/temurin-21-jdk-21.0.5.0.0.11-1.x86_64.rpm
+wget https://packages.adoptium.net/artifactory/rpm/rocky/8/x86_64/Packages/temurin-21-jre-21.0.5.0.0.11-1.x86_64.rpm
+
+sudo dnf install temurin-21-*.rpm
+
 https://packages.adoptium.net/ui/native/rpm/rocky/8/x86_64/Packages/
 ```
 ---
@@ -37,6 +42,8 @@ https://packages.adoptium.net/ui/native/rpm/rocky/8/x86_64/Packages/
 Download the latest Trino tarball from the [official releases page](https://trino.io/download.html). Alternatively, use the following command:
 ```bash
 wget https://repo1.maven.org/maven2/io/trino/trino-server-rpm/436/trino-server-rpm-436.rpm
+
+sudo dnf install trino-server-rpm-436.rpm
 ```
 
 ### **2.2 Use the rpm command to install the package**

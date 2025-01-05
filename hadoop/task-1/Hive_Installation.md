@@ -18,11 +18,18 @@ sudo dnf install java-1.8.0-openjdk-devel -y
 java -version
 ```
 Set `JAVA_HOME` in the `~/.bashrc` file:
-```bash
-echo "export JAVA_HOME=$(dirname $(dirname $(readlink $(readlink $(which java)))))" >> ~/.bashrc
-echo "export PATH=$PATH:$JAVA_HOME/bin" >> ~/.bashrc
-source ~/.bashrc
-```
+   ```bash
+   nano ~/.bashrc
+   ```
+Add the following lines to set up the Java environment:
+   ```bash
+   export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+   export PATH=$PATH:$JAVA_HOME/bin
+   ```
+Save the file and run:
+   ```bash
+   source ~/.bashrc
+   ```
 
 ### 1.3 Install MySQL Server
 Hive uses MySQL as a metastore. Install MySQL server:
@@ -40,7 +47,7 @@ Hive requires Hadoop's configuration for connecting to HDFS. Edit the `core-site
 
 ### 2.1 Locate and Open `core-site.xml`
 ```bash
-sudo nano /usr/local/hadoop/etc/hadoop/core-site.xml
+nano $HADOOP_HOME/etc/hadoop/core-site.xml
 ```
 
 ### 2.2 Add the Configuration
@@ -59,16 +66,6 @@ Inside the `<configuration>` tags, add the following:
 
     <property>
         <name>hadoop.proxyuser.esbati.hosts</name>
-        <value>*</value>
-    </property>
-
-    <property>
-        <name>hadoop.proxyuser.server.hosts</name>
-        <value>*</value>
-    </property>
-
-    <property>
-        <name>hadoop.proxyuser.server.groups</name>
         <value>*</value>
     </property>
 </configuration>
@@ -93,6 +90,7 @@ sudo mv apache-hive-4.0.1-bin /usr/local/hive
 ### 3.3 Set Hive Environment Variables
 Add the following to `~/.bashrc`:
 ```bash
+nano ~/.bashrc
 echo "export HIVE_HOME=/usr/local/hive" >> ~/.bashrc
 echo "export PATH=$PATH:$HIVE_HOME/bin" >> ~/.bashrc
 source ~/.bashrc
@@ -104,28 +102,21 @@ source ~/.bashrc
 
 ### 4.1 Create Hive Directories
 ```bash
-mkdir -p /usr/local/hive/warehouse
-mkdir -p /usr/local/hive/logs
-```
-Or You Can Make In Hadoop:
+mkdir -p /user/local/hive/warehouse
+mkdir -p /user/local/hive/logs
 
+hadoop fs -mkdir /tmp
+hadoop fs -chmod g+w /tmp
+hadoop fs -ls /
+hadoop fs -mkdir /user
+hadoop fs -mkdir /user/hive
+hadoop fs -mkdir /user/hive/warehouse
+hadoop fs -chmod g+w /user/hive/warehouse
 
-![Logo](./images/13.png)
-
-### 4.2 Edit Hive Environment
-Open the `hive-env.sh` file:
-```bash
-nano $HIVE_HOME/conf/hive-env.sh
-```
-Add:
-```bash
-export HADOOP_HOME=/usr/local/hadoop
-export HIVE_HOME=/usr/local/hive
-export HIVE_CONF_DIR=$HIVE_HOME/conf
-export JAVA_HOME=$(dirname $(dirname $(readlink $(readlink $(which java)))))
+hadoop fs -ls /user/hive
 ```
 
-### 4.3 Edit Hive Configuration
+### 4.2 Edit Hive Configuration
 Open the `hive-site.xml` file:
 ```bash
 nano $HIVE_HOME/conf/hive-site.xml
@@ -165,8 +156,8 @@ Add:
 
     <property>
         <name>hive.metastore.warehouse.dir</name>
-        <value>/usr/local/hive/warehouse</value>
-        <description>Location of Hive's data warehouse directory</description>
+        <value>hdfs://localhost:9000/usr/local/hive/warehouse</value>
+        <description>Location of default database for the warehouse</description>
     </property>
 
     <!-- HiveServer2 Configuration -->
@@ -219,18 +210,8 @@ Add:
         <value>/usr/local/hive/logs</value>
         <description>Log directory for Hive</description>
     </property>
-
-    <property>
-        <name>hive.exec.scratchdir</name>
-        <value>/tmp/hive</value>
-        <description>Temporary directory on HDFS for query execution.</description>
-    </property>
-    <property>
-        <name>hive.metastore.warehouse.dir</name>
-        <value>hdfs://localhost:9000/usr/local/hive/warehouse</value>
-        <description>Location of default database for the warehouse</description>
-    </property>
 </configuration>
+
 ```
 
 ---
@@ -246,7 +227,7 @@ mysql -u root -p
 Run the following commands:
 ```sql
 CREATE DATABASE hive;
-CREATE USER 'esbati'@'localhost' IDENTIFIED BY 'esbati';
+CREATE USER 'esbati'@'localhost' IDENTIFIED BY 'faFT^903';
 GRANT ALL PRIVILEGES ON hive.* TO 'esbati'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
@@ -254,15 +235,18 @@ EXIT;
 
 ### 5.3 Download and Add MySQL Connector
 ```bash
-wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.33.tar.gz
-tar -xzvf mysql-connector-java-8.0.33.tar.gz
-sudo cp mysql-connector-java-8.0.33/mysql-connector-java-8.0.33.jar /usr/local/hive/lib
+wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-9.1.0-1.el8.noarch.rpm
+sudo dnf install mysql-connector-j-9.1.0-1.el8.noarch.rpm
+sudo cp /usr/share/java/mysql-connector-java.jar /usr/local/hive/lib/
 ```
 
 ### 5.4 Initialize Hive Metastore Schema
 Initialize the Hive metastore schema:
 ```bash
 schematool -dbType mysql -initSchema
+OR
+java -cp "$HIVE_HOME/lib/*:$HIVE_HOME/conf" org.apache.hive.beeline.HiveSchemaTool -dbType mysql -initSchema --verbose
+
 ```
 
 ---
@@ -273,6 +257,8 @@ schematool -dbType mysql -initSchema
 ```bash
 hive
 ```
+
+OR
 ```bash
 !connect jdbc:hive2://localhost:10000
 ```
@@ -297,5 +283,3 @@ SHOW TABLES;
 ![Logo](./images/8.png)
 
 ---
-
-By following this guide, you can successfully install and configure Apache Hive 4.0.1 on Rocky Linux.
