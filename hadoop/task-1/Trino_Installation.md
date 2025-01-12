@@ -48,7 +48,7 @@ sudo dnf install trino-server-rpm-436.rpm
 
 ### **2.2 Use the rpm command to install the package**
 ```bash
-rpm -i trino-server-rpm-*.rpm --nodeps
+sudo rpm -i trino-server-rpm-*.rpm --nodeps
 ```
 
 ---
